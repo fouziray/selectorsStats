@@ -5,30 +5,55 @@ Class {
 	#package : 'SelectorStats'
 }
 
-{ #category : 'as yet unclassified' }
-SelectorsStats >> findSingleSelectors [
-
-^ Set newFrom: ( SystemNavigation default allMethods  collect: [ :m | m selector ])
-
+{ #category : 'query' }
+SelectorsStats >> methods [
+	"self new methods size"
+	
+	^ SystemNavigation default allMethods
 ]
 
-{ #category : 'as yet unclassified' }
-SelectorsStats >> findSingleSelectorsWithNumberOfImplementation [
-| dictionary|
-dictionary:= Dictionary new.
+{ #category : 'query' }
+SelectorsStats >> reportString [ 
 
- (SystemNavigation default allMethods  collect: [ :m | m selector ] ) do: [ :e | dictionary at: e update: [ :v | v+1 ]  initial: 1    ].
 
-^ dictionary
-
+	String streamContents: [ :s |
+		s nextPutAll: '#selectors: '.
+		s nextPutAll: self selectors size.
+		s cr.
+		]
 ]
 
-{ #category : 'as yet unclassified' }
-SelectorsStats >> nMorphicMethodsAndTheirNumberInTheSystem [
+{ #category : 'query' }
+SelectorsStats >> selectorImplementation [
+	"Returns a dictionary with the number of implementation of a given selector"
 
-	| a |
-	a := Dictionary new.
-	self findSingleSelectorsWithNumberOfImplementation do: [ :key |
-		a at: key update: [ :v | v + 1 ] initial: 1 ].
-	^ a
+	"self new selectorImplementation"
+
+	| dictionary |
+	dictionary := Dictionary new.
+	self methods do: [ :e |
+		dictionary at: e selector update: [ :v | v + 1 ] initial: 1 ].
+	^ dictionary
+]
+
+{ #category : 'query' }
+SelectorsStats >> selectors [
+	"self new selectors size 
+	
+	62423 method names
+	"
+
+	^ Set newFrom: self methods
+]
+
+{ #category : 'query' }
+SelectorsStats >> uniquelyImplementedSelectors [
+	"self new uniquelyImplementedSelectors size"
+	
+	| res |
+	res := OrderedCollection new. 
+	self selectorImplementation keysAndValuesDo: [ :k :v |
+		v = 1 ifTrue: [ res add: k ]
+		 ].
+	^ res
 ]
