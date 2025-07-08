@@ -1,15 +1,35 @@
 Class {
 	#name : 'SelectorsStats',
 	#superclass : 'Object',
+	#instVars : [
+		'methods'
+	],
 	#category : 'SelectorStats',
 	#package : 'SelectorStats'
 }
 
 { #category : 'query' }
+SelectorsStats >> findUniqueMethodBySelector: aSelector [
+	" we use this to find corresponding implementations of monomorphic sites"
+
+	| implementations |
+	implementations := methods select: [ :m | m selector = aSelector ].
+	self assert: implementations size = 1.
+
+	^ implementations first
+]
+
+{ #category : 'initialization' }
+SelectorsStats >> initialize [
+
+	super initialize.
+	methods ifNil: [ methods := SystemNavigation default allMethods ]
+]
+
+{ #category : 'query' }
 SelectorsStats >> methods [
 	"self new methods size"
-	
-	^ SystemNavigation default allMethods
+	^ methods
 ]
 
 { #category : 'query' }
@@ -44,6 +64,18 @@ SelectorsStats >> selectors [
 	"
 
 	^ Set newFrom: self methods
+]
+
+{ #category : 'query' }
+SelectorsStats >> uniquelyImplementedMethods [
+	"self new uniquelyImplementedMethods size"
+	
+	| res |
+	res := OrderedCollection new. 
+	self selectorImplementation keysAndValuesDo: [ :k :v |
+		v = 1 ifTrue: [ res add: k ]
+		 ].
+	^ res
 ]
 
 { #category : 'query' }
