@@ -40,6 +40,14 @@ SelectorInfo >> increaseImplemented [
 	implemented := implemented + 1
 ]
 
+{ #category : 'as yet unclassified' }
+SelectorInfo >> initialize [
+
+	super initialize.
+	implemented := 0.
+	called := 0
+]
+
 { #category : 'printing' }
 SelectorInfo >> printOn: aStream [
 

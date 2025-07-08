@@ -35,12 +35,35 @@ SelectorsStats2 >> computeUniquelyImplementedSelectors [
 
 { #category : 'query' }
 SelectorsStats2 >> computeUniquelyImplementedSenders [
+	"self new computeUniquelyImplementedSenders"
+
+	self class environment allClassesDo: [ :each |
+			self computeUniquelyImplementedSendersOfClass: each.
+			self computeUniquelyImplementedSendersOfClass: each class ]
+]
+
+{ #category : 'query' }
+SelectorsStats2 >> computeUniquelyImplementedSendersOfClass: aClass [
+	"self new computeUniquelyImplementedSenders2"
+
+	aClass methods do: [ :cm |
+			| calls |
+			calls := OrderedCollection new.
+			cm literalsDo: [ :lit |
+					lit isSymbol ifTrue: [ "if the call is for one method part of the uniquely defined method 
+					count it."
+							uniqueDictionary
+								at: lit
+								ifPresent: [ :info | info called: info called + 1 ] ] ] ]
+]
+
+{ #category : 'query' }
+SelectorsStats2 >> deadSlowComputeUniquelyImplementedSenders [
 	"self new analyze; computeUniquelyImplementedSelectors; computeUniquelyImplementedSenders"
 
 	uniqueDictionary keysAndValuesDo: [ :k :v |
-		(SystemNavigation default allCallsOn: k)
-			ifNotEmpty: [ :s | (uniqueDictionary at: k) called: s size]
-		 ]
+			(SystemNavigation default allCallsOn: k) ifNotEmpty: [ :s |
+				(uniqueDictionary at: k) called: s size ] ]
 ]
 
 { #category : 'query' }
@@ -104,4 +127,30 @@ SelectorsStats2 >> uniquelyImplementedSelectors [
 	uniqueDictionary keysAndValuesDo: [ :k :v |
 		v implemented = 1 ifTrue: [ res add: k ] ].
 	^ res
+]
+
+{ #category : 'query' }
+SelectorsStats2 >> xp1 [
+	"self new computeUniquelyImplementedSenders2"
+
+	| calls |
+	calls := Set new.
+	OrderedCollection >> #add:afterIndex: literalsDo: [ :lit |
+		lit isSymbol ifTrue: [ calls add: lit ] ].
+	^ calls
+]
+
+{ #category : 'query' }
+SelectorsStats2 >> xp2 [
+	"self new computeUniquelyImplementedSenders2"
+
+	OrderedCollection methods do: [ :cm |
+			| calls |
+			calls := OrderedCollection new.
+			cm literalsDo: [ :lit |
+					lit isSymbol ifTrue: [ "if the call is for one method part of the uniquely defined method 
+					count it."
+							uniqueDictionary
+								at: lit
+								ifPresent: [ :info | info called: info called + 1 ] ] ] ]
 ]
