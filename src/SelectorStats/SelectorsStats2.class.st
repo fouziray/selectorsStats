@@ -71,7 +71,10 @@ SelectorsStats2 >> initialize [
 
 	super initialize.
 	rawDictionary := Dictionary new.
-	uniqueDictionary := Dictionary new
+	uniqueDictionary := Dictionary new.
+	self analyze.
+	self computeUniquelyImplementedSelectors .
+	
 ]
 
 { #category : 'query' }
@@ -79,6 +82,26 @@ SelectorsStats2 >> methods [
 	"self new methods size"
 	
 	^ SystemNavigation default allMethods
+]
+
+{ #category : 'query' }
+SelectorsStats2 >> microDownmonoSites [
+	"self new microDownmonoSites"
+|calls|
+calls := OrderedCollection new.
+		
+	(PackageOrganizer default packageNamed: 'Microdown') methods do: [
+		:cm |
+	
+		cm literalsDo: [ :lit |
+			lit isSymbol ifTrue: [ "if the call is for one method part of the uniquely defined method 
+					count it."
+					uniqueDictionary at: lit ifPresent: [ :info |
+					
+					info called: info called + 1.
+					calls add: lit  ] ] ].
+		 ].
+	^ calls
 ]
 
 { #category : 'query' }
