@@ -73,7 +73,7 @@ SelectorsStats >> uniquelyImplementedMethods [
 	| res |
 	res := OrderedCollection new. 
 	self selectorImplementation keysAndValuesDo: [ :k :v |
-		v = 1 ifTrue: [ res add: k ]
+		v = 1 ifTrue: [ res add: (self findUniqueMethodBySelector: k)  ]
 		 ].
 	^ res
 ]
