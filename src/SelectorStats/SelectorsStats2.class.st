@@ -104,6 +104,7 @@ SelectorsStats2 >> selectorImplementation [
 				ifPresent: [ :i | i increaseImplemented ]
 				ifAbsentPut: [
 						SelectorInfo new
+							selector: e selector;
 							implemented: 1;
 							yourself ] ]
 ]

@@ -3,7 +3,8 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'implemented',
-		'called'
+		'called',
+		'selector'
 	],
 	#category : 'SelectorStats',
 	#package : 'SelectorStats'
@@ -51,7 +52,21 @@ SelectorInfo >> initialize [
 { #category : 'printing' }
 SelectorInfo >> printOn: aStream [
 
-	super printOn: aStream.
-	aStream nextPutAll: ' imp: ' , implemented asString.
+	aStream
+		nextPutAll: selector;
+		space.
+	aStream nextPutAll: ' imp: ' , implemented asString; space.
 	called ifNotNil: [ :c | aStream nextPutAll: 'called: ' , c asString ]
+]
+
+{ #category : 'accessing' }
+SelectorInfo >> selector [
+
+	^ selector
+]
+
+{ #category : 'accessing' }
+SelectorInfo >> selector: aSymbol [
+
+	selector := aSymbol
 ]
